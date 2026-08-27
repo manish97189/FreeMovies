@@ -1,121 +1,78 @@
 import { useState } from "react";
-import.meta.env.VITE_TMDB_TOKEN;
-import.meta.env.VITE_IFRAME_URL;
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import MovieDetails from "./components/MovieDetails";
+import TVDetails from "./components/TVDetails";
+import VideoPlayer from "./components/VideoPlayer";
+import HomePage from "./pages/HomePage";
+import MoviesPage from "./pages/MoviesPage";
+import TVPage from "./pages/TVPage";
+import SearchPage from "./pages/SearchPage";
+import GenrePage from "./pages/GenrePage";
+import "./index.css";
 
-function App() {
-  const [search, setSearch] = useState("");
-  const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null);
+export default function App() {
+  // Shared hero state (set on home page)
+  const [heroItem, setHeroItem] = useState(null);
 
-  async function getMovies() {
-    if (!search.trim()) return;
+  // Iframe URLs
+  const iframeUrls = {
+    movie: "https://www.vidking.net/embed/movie/",
+    tv:    "https://www.vidking.net/embed/tv/",
+  };
 
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-        search
-      )}`,
-      {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-        },
-      }
-    );
+  // Modal state
+  const [detailsItem, setDetailsItem]   = useState(null); // { item, mediaType }
+  const [playerSession, setPlayerSession] = useState(null);
 
-    const data = await response.json();
-
-    setMovies(data.results);
+  function openDetails(item, mediaType) {
+    setDetailsItem({ item, mediaType });
   }
-
-  function watchMovie(id) {
-    console.log("Movie ID:", id);
-    setSelectedMovie(id);
+  function openPlayer(session) {
+    setDetailsItem(null);
+    setPlayerSession(session);
   }
 
   return (
-    <div className="min-h-screen bg-black p-10 text-white">
+    <BrowserRouter>
+      <Navbar />
 
-      {/* Search */}
-      <div className="flex gap-3">
-        <input
-          type="text"
-          placeholder="Search movie..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-80 rounded-lg px-4 py-2 text-black"
-        />
-
-        <button
-          onClick={getMovies}
-          className="rounded-lg bg-blue-500 px-5 py-2"
-        >
-          Search
-        </button>
-      </div>
-
-      {/* Movies */}
-      <div className="mt-8 grid grid-cols-4 gap-6">
-
-        {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="overflow-hidden rounded-lg bg-gray-900"
-          >
-
-            {movie.poster_path && (
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                className="h-80 w-full object-cover"
-              />
-            )}
-
-            <div className="p-4">
-
-              <h2 className="text-xl font-bold">
-                {movie.title}
-              </h2>
-
-              <p className="mt-2 text-gray-400">
-                TMDB ID: {movie.id}
-              </p>
-
-              <button
-                onClick={() => watchMovie(movie.id)}
-                className="mt-3 rounded-lg bg-red-600 px-5 py-2 hover:bg-red-700"
-              >
-                Watch Movie
-              </button>
-
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={
+            <HomePage onDetails={openDetails} heroItem={heroItem} setHeroItem={setHeroItem} />
+          }/>
+          <Route path="/movies"    element={<MoviesPage onDetails={openDetails} />} />
+          <Route path="/tv"        element={<TVPage     onDetails={openDetails} />} />
+          <Route path="/search"    element={<SearchPage onDetails={openDetails} />} />
+          <Route path="/genre/:id" element={<GenrePage  onDetails={openDetails} />} />
+          {/* 404 */}
+          <Route path="*" element={
+            <div className="empty" style={{paddingTop:"160px"}}>
+              <div className="empty-icon">🎬</div>
+              <h3>PAGE NOT FOUND</h3>
+              <p>The reel seems to have snapped.</p>
+              <a className="btn btn-red" href="/" style={{marginTop:18,display:"inline-flex"}}>Go Home</a>
             </div>
-          </div>
-        ))}
+          }/>
+        </Routes>
+      </main>
 
-      </div>
+      <Footer />
 
-      {/* Video Player */}
-      {selectedMovie && (
-        <div className="mt-10">
-
-          <h2 className="mb-4 text-2xl font-bold">
-            Watching: {selectedMovie}
-          </h2>
-
-          <iframe
-            src={`${import.meta.env.VITE_IFRAME_URL}${selectedMovie}`}
-            width="100%"
-            height="600"
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-            allowFullScreen
-            referrerPolicy="no-referrer"
-            title="Movie Player"
-            className="rounded-lg"
-          />
-
-        </div>
+      {/* Movie Details Modal */}
+      {detailsItem?.mediaType === "movie" && (
+        <MovieDetails item={detailsItem.item} onClose={() => setDetailsItem(null)} onWatch={openPlayer} />
       )}
-
-    </div>
+      {/* TV Details Modal */}
+      {detailsItem?.mediaType === "tv" && (
+        <TVDetails item={detailsItem.item} onClose={() => setDetailsItem(null)} onWatch={openPlayer} />
+      )}
+      {/* Video Player */}
+      {playerSession && (
+        <VideoPlayer session={playerSession} iframeUrls={iframeUrls} onClose={() => setPlayerSession(null)} />
+      )}
+    </BrowserRouter>
   );
 }
-
-export default App;
