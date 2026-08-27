@@ -1,5 +1,7 @@
-// ─── Centralized API service — all calls go through the backend ───────────────
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+// ─── Centralized API service ──────────────────────────────────────────────────
+// On Vercel: frontend + API are same domain → BASE = ""
+// Locally: backend runs on port 3001
+const BASE = import.meta.env.VITE_BACKEND_URL || "";
 
 async function get(path) {
   const res = await fetch(`${BASE}${path}`);
