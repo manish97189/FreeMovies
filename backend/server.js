@@ -9,10 +9,25 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const TOKEN = process.env.TMDB_TOKEN;
 const BASE = "https://api.themoviedb.org/3";
-const CLIENT = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+// Allow any origin — covers localhost, Vercel preview URLs, and production
+const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: [CLIENT, "http://127.0.0.1:5173"] }));
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no origin (curl, server-to-server) or any listed origin
+    // Also allow all *.vercel.app domains automatically
+    if (!origin) return cb(null, true);
+    if (CLIENT_ORIGINS.includes(origin)) return cb(null, true);
+    if (origin.endsWith(".vercel.app")) return cb(null, true);
+    if (origin === "http://localhost:5173" || origin === "http://127.0.0.1:5173") return cb(null, true);
+    cb(null, true); // open CORS for now — restrict after confirming prod URL
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // ─── TMDB Helper ──────────────────────────────────────────────────────────────
