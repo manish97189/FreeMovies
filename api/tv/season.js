@@ -1,5 +1,5 @@
-import { tmdb, cors } from "../../_lib.js";
-// Vercel route: /api/tv/[id]/season/[seasonNumber]
+import { tmdb, cors } from "../_lib.js";
+// Called via vercel.json rewrite: /api/tv/:id/season/:seasonNumber → /api/tv/season?id=:id&seasonNumber=:seasonNumber
 export default async function handler(req, res) {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
