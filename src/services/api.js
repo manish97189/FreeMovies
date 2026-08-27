@@ -1,7 +1,7 @@
 // ─── Centralized API service ──────────────────────────────────────────────────
-// On Vercel: frontend + API are same domain → BASE = ""
-// Locally: backend runs on port 3001
-const BASE = import.meta.env.VITE_BACKEND_URL || "";
+// VITE_BACKEND_URL=http://localhost:3001 in .env for local dev
+// On Vercel: not set → BASE="" → /api/... calls go to same-domain serverless fns
+const BASE = import.meta.env.VITE_BACKEND_URL ?? "";
 
 async function get(path) {
   const res = await fetch(`${BASE}${path}`);
