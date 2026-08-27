@@ -50,9 +50,9 @@ export default function Navbar() {
       {/* Left */}
       <div className="nav-left">
         <NavLink to="/" className="nav-logo">
-          <span className="logo-cine">CINE</span>
+          <span className="logo-cine">ANNU</span>
           <div className="logo-dot" />
-          <span className="logo-stream">STREAM</span>
+          <span className="logo-stream">MOVIES</span>
         </NavLink>
 
         <div className="nav-links">
@@ -82,8 +82,18 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Right — Search */}
+      {/* Right — Search + creator credit */}
       <div className="nav-right">
+        {/* Creator watermark */}
+        <span style={{
+          fontSize: "11px",
+          color: "rgba(255,255,255,0.35)",
+          fontWeight: 600,
+          letterSpacing: "0.5px",
+          marginRight: "14px",
+          whiteSpace: "nowrap",
+          fontFamily: "Inter, sans-serif"
+        }}>by Manish</span>
         <form onSubmit={handleSearch} style={{display:"flex"}}>
           <div className="nav-search-box">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

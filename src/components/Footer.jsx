@@ -5,9 +5,12 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-top">
         <div>
-          <div className="footer-logo">CINE<span className="red">STREAM</span></div>
+          <div className="footer-logo">ANNU<span className="red">MOVIES</span></div>
           <p className="footer-tagline">
             Your premium destination for movies and TV shows. Stream anything, anytime.
+          </p>
+          <p style={{fontSize:"12px",color:"rgba(255,255,255,0.25)",marginTop:"8px",fontWeight:500}}>
+            Made with ❤️ by <span style={{color:"var(--red)",fontWeight:700}}>Manish</span>
           </p>
         </div>
 
@@ -40,13 +43,23 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <span className="footer-copy">
-          © 2026 CineStream. Powered by TMDB. Not affiliated with any studio.
+          © 2026 Annumovies. Powered by TMDB. Not affiliated with any studio.
         </span>
-        <div className="footer-social">
-          <button className="footer-social-btn">𝕏</button>
-          <button className="footer-social-btn">📘</button>
-          <button className="footer-social-btn">📸</button>
-          <button className="footer-social-btn">▶</button>
+        <div style={{display:"flex",alignItems:"center",gap:"18px"}}>
+          {/* @Manish watermark */}
+          <span style={{
+            fontSize:"13px",
+            fontWeight:700,
+            color:"var(--red)",
+            letterSpacing:"0.5px",
+            fontFamily:"Inter, sans-serif"
+          }}>@Manish</span>
+          <div className="footer-social">
+            <button className="footer-social-btn">𝕏</button>
+            <button className="footer-social-btn">📘</button>
+            <button className="footer-social-btn">📸</button>
+            <button className="footer-social-btn">▶</button>
+          </div>
         </div>
       </div>
     </footer>
